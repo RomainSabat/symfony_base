@@ -21,7 +21,7 @@ class CandidateApplicationFlow extends AbstractFlowType
     public function buildFormFlow(FormFlowBuilderInterface $builder, array $options): void
     {
         $builder->addStep('step1', InfoPersoType::class);
-        $builder->addStep('step2', ExperienceType::class);
+        $builder->addStep('step2', ExperienceType::class, [], fn(Candidate $data) => !$data->hasExperience());
         $builder->addStep('step3', DispoType::class);
         $builder->addStep('step4', ConsentType::class);
 

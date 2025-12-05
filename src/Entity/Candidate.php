@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CandidateRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CandidateRepository::class)]
@@ -38,9 +39,12 @@ class Candidate
     #[Assert\NotBlank(groups: ['step2'])]
     private ?string $experienceDetails = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(groups: ['step3'])]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $availabilityDate = null;
+
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $availableNow = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(groups: ['step5'])]
@@ -136,7 +140,7 @@ class Candidate
         return $this->availabilityDate;
     }
 
-    public function setAvailabilityDate(\DateTime $availabilityDate): static
+    public function setAvailabilityDate(?\DateTime $availabilityDate): static
     {
         $this->availabilityDate = $availabilityDate;
 
@@ -178,4 +182,17 @@ class Candidate
 
         return $this;
     }
+
+    public function isAvailableNow(): ?bool
+    {
+        return $this->availableNow;
+    }
+
+    public function setAvailableNow(?bool $availableNow): self
+    {
+        $this->availableNow = $availableNow;
+
+        return $this;
+    }
+
 }

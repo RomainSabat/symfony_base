@@ -9,7 +9,7 @@ class BasicDto
     // Step 1:
 
     #[Assert\NotBlank(groups: ['step1'])]
-    public ?string $field11 = null;
+    public ?string $firstname = null;
 
     #[Assert\NotBlank(groups: ['step1'])]
     #[Assert\Length(min: 3, groups: ['step1'])]

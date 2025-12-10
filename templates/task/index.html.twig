@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des tâches{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto mt-10">
+
+    <h1 class="text-3xl font-bold mb-6">Liste des tâches</h1>
+
+    {# Messages flash d'erreur et succès #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="mb-4 p-3 rounded
+                        {% if label == 'error' %}bg-red-100 text-red-700{% endif %}
+                        {% if label == 'success' %}bg-green-100 text-green-700{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <a href="{{ path('task_create') }}"
+       class="inline-block mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        ➕ Nouvelle tâche
+    </a>
+
+    <table class="w-full bg-white shadow rounded overflow-hidden">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="p-3 text-left">Nom</th>
+                <th class="p-3 text-left">Auteur</th>
+                <th class="p-3 text-left">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if tasks is not empty %}
+            {% for task in tasks %}
+                <tr class="border-b">
+                    <td class="p-3">{{ task.name }}</td>
+                    <td class="p-3">{{ task.author.email }}</td>
+                    <td class="p-3 space-x-2">
+                        <a href="{{ path('task_view', { id: task.id }) }}" class="text-blue-600 underline">Voir</a>
+
+                        {% if is_granted('TASK_EDIT', task) %}
+                            <a href="{{ path('task_edit', { id: task.id }) }}" class="text-yellow-600 underline">Modifier</a>
+                        {% endif %}
+
+                        {% if is_granted('TASK_DELETE', task) %}
+                            <a href="{{ path('task_delete', { id: task.id }) }}"
+                               class="text-red-600 underline"
+                               onclick="return confirm('Supprimer ?');">
+                                Supprimer
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="3" class="p-4 text-center text-gray-500">
+                    Aucune tâche pour le moment. <a href="{{ path('task_create') }}" class="text-blue-600 underline">Créer votre première tâche</a>
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une tâche{% endblock %}
+
+{% block body %}
+<div class="max-w-xl mx-auto mt-10">
+
+    <h1 class="text-2xl font-bold mb-6">Créer une nouvelle tâche</h1>
+
+    {{ form_start(form, { attr: { class: 'space-y-4' } }) }}
+
+        <div>
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, { attr: { class: 'w-full border rounded p-2' } }) }}
+            {{ form_errors(form.name) }}
+        </div>
+
+        <div>
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description, { attr: { class: 'w-full border rounded p-2 h-32' } }) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Créer
+        </button>
+
+    {{ form_end(form) }}
+
+    <a href="{{ path('task_index') }}" class="text-blue-600 underline mt-4 inline-block">Retour</a>
+
+</div>
+{% endblock %}

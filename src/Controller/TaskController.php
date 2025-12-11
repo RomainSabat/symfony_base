@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Service\TaskService;
 
 #[Route('/task')]
 class TaskController extends AbstractController
@@ -18,7 +19,14 @@ class TaskController extends AbstractController
     #[Route('/', name: 'task_index')]
     public function index(TaskRepository $taskRepository): Response
     {
-        $tasks = $taskRepository->findAll();
+        $user = $this->getUser();
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $tasks = $taskRepository->findAll();
+        } else {
+            $tasks = $taskRepository->findBy(['author' => $user]);
+            // $tasks = $taskRepository->findByUser($user);
+        }
 
         return $this->render('task/index.html.twig', [
             'tasks' => $tasks,
@@ -30,8 +38,6 @@ class TaskController extends AbstractController
     {
         $task = new Task();
         $task->setAuthor($this->getUser());
-        $task->setCreatedAt(new \DateTimeImmutable());
-        $task->setUpdatedAt(new \DateTimeImmutable());
 
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
@@ -61,16 +67,18 @@ class TaskController extends AbstractController
 
     #[Route('/{id}/edit', name: 'task_edit')]
     #[IsGranted('TASK_EDIT', 'task')]
-    public function edit(Task $task, Request $request, EntityManagerInterface $em): Response
+    public function edit(Task $task, Request $request, EntityManagerInterface $em, TaskService $taskService): Response
     {
+        if (!$taskService->canEdit($task)) {
+            $this->addFlash('error', 'Vous ne pouvez pas modifier cette tâche car elle a été créée il y a plus de 7 jours.');
+            return $this->redirectToRoute('task_index');
+         }
 
         $form = $this->createForm(TaskType::class, $task);
-        $task->setUpdatedAt(new \DateTimeImmutable());
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
+            $em->flush(); // updatedAt est automatiquement mis à jour grâce à PreUpdate
 
             $this->addFlash('success', 'Tâche modifiée avec succès !');
             return $this->redirectToRoute('task_view', ['id' => $task->getId()]);

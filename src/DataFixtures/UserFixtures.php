@@ -9,6 +9,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
 {
+
+    public const ADMIN_REFERENCE = 'user-admin';
+    public const USER_REFERENCE = 'user-regular';
     // Injection via constructeur
     public function __construct(private UserPasswordHasherInterface $hasher)
     {
@@ -22,12 +25,14 @@ class UserFixtures extends Fixture
         $user->setRoles(['ROLE_USER']);
         $user->setPassword($this->hasher->hashPassword($user, 'password'));
         $manager->persist($user);
+        $this->addReference(self::USER_REFERENCE, $user);
 
         $admin = new User();
         $admin->setEmail('admin@test.com');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword($this->hasher->hashPassword($admin, 'adminpass'));
         $manager->persist($admin);
+        $this->addReference(self::ADMIN_REFERENCE, $admin);
 
         $manager->flush();
     }

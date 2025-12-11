@@ -4,10 +4,13 @@ namespace App\Form;
 
 use App\Entity\Task;
 use App\Entity\User;
+use Doctrine\DBAL\Types\DateImmutableType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use DateTimeImmutable;
 
 class TaskType extends AbstractType
 {
@@ -16,12 +19,7 @@ class TaskType extends AbstractType
         $builder
             ->add('name')
             ->add('description')
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updatedAt', null, [
-                'widget' => 'single_text',
-            ])
+            
             ->add('author', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'id',

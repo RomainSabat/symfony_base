@@ -7,6 +7,15 @@
 
     <h1 class="text-2xl font-bold mb-6">Modifier la tâche</h1>
 
+    {# Flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="mb-4 p-3 rounded {{ label == 'success' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     {{ form_start(form, { attr: { class: 'space-y-4' } }) }}
 
         <div>
